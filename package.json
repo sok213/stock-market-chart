@@ -1,0 +1,20 @@
+{
+  "name": "stockmarket",
+  "version": "1.0.0",
+  "description": "An application that allows you to chart the stock market",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Sophanarith Sok",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.13.4",
+    "node-persist": "0.0.11",
+    "socket.io": "^1.4.6"
+  },
+  "devDependencies": {
+    "jQuery": "^1.7.4"
+  }
+}

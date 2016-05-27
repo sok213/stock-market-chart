@@ -1,0 +1,21 @@
+{
+  "name": "stockmarket",
+  "description": "An application that allows you to chart the stock market",
+  "main": "server.js",
+  "authors": [
+    "Sophanarith Sok"
+  ],
+  "license": "ISC",
+  "homepage": "none",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "react": "^15.0.1"
+  }
+}

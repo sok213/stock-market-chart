@@ -1,0 +1,178 @@
+/* Sticky footer styles
+-------------------------------------------------- */
+
+html,
+body {
+  height: 100%;
+  /* The html and body elements cannot have any padding or margin. */
+}
+
+/* Wrapper for page content to push down footer */
+#wrap {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  /* Negative indent footer by its height */
+  margin: 0 auto -60px;
+  /* Pad bottom by footer height */
+  padding: 0 0 60px;
+}
+
+/* Set the fixed height of the footer here */
+#footer {
+  height: 60px;
+  background-color: #ecf2f9;
+}
+
+.navbar {
+  background-color: #19324d;
+  border-color: #19324d;
+}
+
+.navbar-brand {
+  color: #79d2a6 !important;
+}
+
+.nav li a{
+  color: #9fbfdf !important;
+}
+
+ .navbar-default .navbar-nav > .active{
+    color: #000;
+   background: #DB6918;
+ }
+ .navbar-default .navbar-nav > .active > a, 
+ .navbar-default .navbar-nav > .active > a:hover, 
+ .navbar-default .navbar-nav > .active > a:focus {
+      color: #000;
+      background: #DB6918 !important;
+ }
+
+ .dropdown-menu {
+  background-color: #2c5887;
+  border-radius: 7px;
+ }
+
+/* Custom page CSS
+-------------------------------------------------- */
+/* Not required for template or sticky footer method. */
+
+h1 { 
+  color: #9D9DA8;
+  font-family: Copperplate / Copperplate Gothic Light, sans-serif !important; 
+}
+
+.page-header {
+  border-bottom: thin solid #c6d9ec !important;
+}
+
+#wrap > .container {
+  padding: 60px 15px 0;
+}
+.container .credit {
+  margin: 20px 0;
+}
+
+#footer > .container {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+code {
+  font-size: 80%;
+}
+
+.container {
+  width: auto;
+  max-width: 800px;
+  padding: 0 15px;
+}
+.container .credit {
+  margin: 20px 0;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #f2f2f2;
+}
+
+.underline {
+  padding-bottom: 15px;
+  border-bottom: thin solid #9fbee0;
+}
+
+#sidebar-wrapper {
+  margin-top: -19px;
+}
+
+html, body {
+  overflow-x: hidden;
+}
+
+.overline {
+  border-top: thin solid white;
+  pointer-events: none;
+  color: #79d2a6 !important;
+}
+
+#stockname {
+  padding-left: 10px;
+}
+
+.btn-success {
+    height: 30px;
+    margin-top: -5px;
+    margin-left: 5px;
+    outline: none !important;
+    border-radius: 0px 0px 0px 0px;
+}
+
+.delete-btn {
+  background-color: #6897c9;
+  height: 30px;
+  width: 40px;
+  border-style: none;
+  float: right;
+  outline: none;
+  border-radius: 20px 0px 0px 20px;
+  opacity: 0.65;
+  transition: 0.4s;
+}
+
+.delete-btn:hover + .stockItem{
+  border-left: 3px solid #BA55D3;
+  color: white;
+}
+
+.delete-btn:hover {
+  opacity: 1;
+}
+
+.icon-margin {
+  height: 40px;
+  width: 100%;
+  margin-top: -5px;
+  margin-left: -5px;
+  transition: 0.5s;
+}
+
+.stockItem:hover {
+  border-left: 3px solid #BA55D3;
+}
+
+.stockItem {
+  width: 150px;
+  float: left;
+  transition: 0.2s;
+}
+
+.test {
+  margin-bottom: 5px;
+}
+
+.chart {
+  height: 400px;
+}

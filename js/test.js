@@ -1,0 +1,1 @@
+exports.test = "fuck from test.js";
