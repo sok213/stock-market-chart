@@ -105,7 +105,7 @@ code {
 }
 
 #sidebar-wrapper {
-  margin-top: -19px;
+
 }
 
 html, body {
@@ -113,7 +113,6 @@ html, body {
 }
 
 .overline {
-  border-top: thin solid white;
   pointer-events: none;
   color: #79d2a6 !important;
 }
@@ -128,6 +127,14 @@ html, body {
     margin-left: 5px;
     outline: none !important;
     border-radius: 0px 0px 0px 0px;
+}
+
+.btn-danger {
+  height: 30px;
+  margin-top: -5px;
+  margin-left: 5px;
+  outline: none !important;
+  border-radius: 0px 0px 0px 0px;
 }
 
 .delete-btn {
@@ -174,11 +181,13 @@ html, body {
 }
 
 .chart {
-  height: 400px;
+  height: 420px;
 }
 
 #clearChart:hover {
-  color: #fc7171 !important;
-  font-size: 16px !important;
-  transition: 0.3s;
+
+}
+
+.top {
+  margin-top: 50px;
 }
