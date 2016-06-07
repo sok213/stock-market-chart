@@ -176,3 +176,9 @@ html, body {
 .chart {
   height: 400px;
 }
+
+#clearChart:hover {
+  color: #fc7171 !important;
+  font-size: 16px !important;
+  transition: 0.3s;
+}

@@ -11,8 +11,6 @@
 
     <title>Stock Market Chart</title>
 
-    <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
 
     <!-- ReactJS -->
     <script src="bower_components/react/react.js"></script>
@@ -23,11 +21,19 @@
     <script src="https://code.highcharts.com/stock/highstock.js"></script>
     <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
 
+    <!-- Socket.io -->
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script src="js/require.js"></script>
+
     <!-- jQuery version 1.12.3-->
     <script src="js/jquery-1.12.3.min.js"></script>
 
-    <!-- Bootstrap Core JavaScript -->
+      <!-- Bootstrap Core JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/js/bootstrap.min.js"></script>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Font Aweseome -->
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
@@ -49,7 +55,6 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
 
 </head>
 
@@ -86,9 +91,6 @@
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav navbar-right">
-                        <li>
-                            <a href="#">About</a>
-                        </li>
                         <li>
                             <a href="#" id="clearChart">Clear Chart</a>
                         </li>
@@ -140,11 +142,20 @@
         </footer>
     <!-- /#sidebar-wrapper -->
     </div>
-
     <!-- Application Javascript -->
-    <script src="js/require.js"></script>
     <script type="text/babel" src="js/app.js"></script>
 
+    <script>
+    var socket = io();
+
+    socket.emit('test');
+
+    //event listener to see if chat message is run??
+    socket.on('test', function(){
+      console.log('THJISIS TEST')
+    });
+
+  </script>
 </body>
 
 </html>
