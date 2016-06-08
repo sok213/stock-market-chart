@@ -104,8 +104,9 @@ code {
   border-bottom: thin solid #9fbee0;
 }
 
-#sidebar-wrapper {
-
+.sidebar-brand {
+  border-bottom: thin solid #369b89;
+  background-color: #369b89;
 }
 
 html, body {
@@ -114,11 +115,21 @@ html, body {
 
 .overline {
   pointer-events: none;
-  color: #79d2a6 !important;
+  color: #a2efbf !important;
 }
 
 #stockname {
   padding-left: 10px;
+  padding-top: 3px !important;
+  margin-bottom: 5px;
+  font-size: 17px !important;
+  height: 7px;
+  border: thin solid #dbdbdb !important;
+  border-radius: 0px;
+}
+
+#menu-toggle {
+  outline: none;
 }
 
 .btn-success {
@@ -184,10 +195,16 @@ html, body {
   height: 420px;
 }
 
-#clearChart:hover {
-
+.list-item {
+  margin-top: 20px;
 }
 
 .top {
   margin-top: 50px;
+}
+
+#invalid {
+  margin-top: -20px;
+  color: red;
+  visibility: hidden;
 }

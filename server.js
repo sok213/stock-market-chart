@@ -27,14 +27,6 @@ io.on('connection', function(socket) {
 //------------------------------------------------------------------	
 
 	socket.on('render chart', function(x) {
-		//x DOES NOT INCLUDE SUBMISSIONS FROM ALL SOCKETS.
-		//CLIENT SUBMISSIONS ARE SEPARATED AND SIDE MENU LIST
-		//DOES NOT GET UPDATED UNTIL STOREDSTOCKS GET
-		//RENDERED ON SOCKET REFRESH.
-
-		//SOLUTION: before calling this render chart function, 
-		//bring in currentStocks to this file and update it
-		//with the items within stockList.
 		console.log('rendering chart with: '+x)
 		console.log('adding: '+x[x.length-1]+' to "add stocks to side menu"')
 		io.emit('add stocks to side menu', x[x.length-1]);
@@ -69,6 +61,15 @@ io.on('connection', function(socket) {
 		storage.setItem('stockList', storedStocks);
 		console.log('setting stockList to: '+ storedStocks);
 	});
+
+	socket.on('empty list', function() {
+		storedStocks = [];
+		storage.setItem('stockList', storedStocks);
+	});
+
+	socket.on('clear', function() {
+		io.emit('clear');
+	})
 });
 
 app.use(express.static('./'));

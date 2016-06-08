@@ -289,7 +289,7 @@ $(function () {
     });
 
     socket.on('render chart', function(stocks) {
-        //seriesOptions = [];
+        seriesOptions=[];
         stocks.filter(function(stock) {
             newChart = new Markit.InteractiveChartApi(stock, 360);
         });
@@ -298,8 +298,6 @@ $(function () {
     socket.on('add stocks to side menu', function(arr) {
         //retrieves array from storage in server.js file.
         //pushes the array into currentStock
-        //currentStock.push(arr);
-        //currentStock = []
         if(Array.isArray(arr)) {
             console.log('array: '+arr)
             arr.filter(function(x) {
@@ -308,7 +306,7 @@ $(function () {
             socket.emit('store stock list', currentStock);
         } else {
             console.log('not array: '+ arr +'pushed into: '+ currentStock)
-            
+
             //Shitty fix for side-menu socket.io sync bug.
             if(currentStock[currentStock.length-1] == arr) {
                 currentStock.pop();
@@ -317,8 +315,6 @@ $(function () {
             console.log(currentStock)
         }
 
-        //currentStock = arr;
-
         ReactDOM.render(
             <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar')
         )
@@ -326,34 +322,46 @@ $(function () {
     
     $('#addStock').click(function(e) {
         e.preventDefault();
-        //pushes the value of from submission to the currentStock array.
-        //currentStock = [];
-        currentStock.push($('form').serializeArray()[0].value.toUpperCase());
-        console.log("currentStock on form: "+ currentStock)
-        //added the form submission to the socket function "store stock list"
-        socket.emit('store stock list', $('form').serializeArray()[0].value.toUpperCase());
-        seriesOptions = [];
+        var userInput = $('form').serializeArray()[0].value.toUpperCase();
 
-        //takes the array of submmited stocks and passes it through 'render chart'
-        socket.emit('render chart', currentStock);
+        //Filter for form submission to prevent invalid 
+        //stock symbols or pre-existing symbols within the list.
+        if(currentStock.indexOf(userInput) == -1) {
+            //pushes the value of from submission to the currentStock array.
+            currentStock.push(userInput);
+            console.log("currentStock on form: "+ currentStock)
+            //added the form submission to the socket function "store stock list"
+            socket.emit('store stock list', userInput);
+            seriesOptions = [];
+
+            //takes the array of submmited stocks and passes it through 'render chart'
+            socket.emit('render chart', currentStock);
+            $('#invalid').css('visibility', 'hidden');
+        } else {
+            $('#invalid').html(userInput + " has already been added.")
+            $('#invalid').css('visibility', 'visible');
+        }
 
         document.getElementById('stockname').value = '';
         //Render React to the DOM whenever a new symbol is submitted.
     });
 
     $('#clearChart').click(function() {
+        socket.emit('clear');
+    });
+
+    socket.on('clear', function() {
         currentStock = [];
-        socket.emit('store stock list', []);
-        seriesOptions = [];
+        socket.emit('empty list');
         chart.series.filter(function(data) {
             data.setData([]);
         });
         $('.list-item').remove();
         $('#chartContainer').empty();
         ReactDOM.render(
-            <SideBarList />, document.getElementById('sidebar')
+            <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar')
         )
-    });
+    })
 
     //Define React SideBarList Class
     var SideBarList = React.createClass({
@@ -368,11 +376,7 @@ $(function () {
             currentStock.splice(currentStock.indexOf(x), 1);
             this.setState({stockList: { stockTick: [{symbol: this.props.bankOfStocks}]}});
             seriesOptions = [];
-            socket.emit('store stock list', $('form').serializeArray()[0].value.toUpperCase())
-            //currentStock.filter(function(stock) {
-              //  newChart = new Markit.InteractiveChartApi(stock, 360);
-            //});
-
+            socket.emit('store stock list', $('form').serializeArray()[0].value.toUpperCase());
             if(currentStock.length == 0) {
                 $('#chartContainer').empty();
             }
