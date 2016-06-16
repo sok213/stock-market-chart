@@ -300,11 +300,39 @@ $(function () {
         $(".list-btn").html($('.list-btn').text() == 'Hide stock list' ? 'Show stock list' : 'Hide stock list');
     });
 
-    socket.on('render chart', function(stocks) {
+    socket.on('render chart', function(stocks, time) {
         seriesOptions=[];
         stocks.filter(function(stock) {
-            newChart = new Markit.InteractiveChartApi(stock, timeFrame);
+            newChart = new Markit.InteractiveChartApi(stock, time);
         });
+
+        //checks to see which time frame is activated on the chart.
+        //Changes the activated one to have an orange outline.
+        if(time == 30) {
+            $('.1m').css('border-color', '#ffc656');
+
+            $('.3m').css('border-color', '#f2f2f2');
+            $('.6m').css('border-color', '#f2f2f2');
+            $('.1y').css('border-color', '#f2f2f2');
+        } else if(time == 90) {
+            $('.3m').css('border-color', '#ffc656');
+
+            $('.1m').css('border-color', '#f2f2f2');
+            $('.6m').css('border-color', '#f2f2f2');
+            $('.1y').css('border-color', '#f2f2f2');
+        } else if(time == 183) {
+            $('.6m').css('border-color', '#ffc656');
+
+            $('.3m').css('border-color', '#f2f2f2');
+            $('.1m').css('border-color', '#f2f2f2');
+            $('.1y').css('border-color', '#f2f2f2');
+        } else if(time == 366) {
+            $('.1y').css('border-color', '#ffc656');
+
+            $('.3m').css('border-color', '#f2f2f2');
+            $('.6m').css('border-color', '#f2f2f2');
+            $('.1m').css('border-color', '#f2f2f2');
+        }
     });
 
     socket.on('add stocks to side menu', function(arr) {
@@ -376,7 +404,7 @@ $(function () {
                 seriesOptions = [];
 
                 //takes the array of submmited stocks and passes it through 'render chart'
-                socket.emit('render chart', currentStock);
+                socket.emit('render chart', currentStock, timeFrame);
                 $('#invalid').css('visibility', 'hidden');
             } else {
                 $('#invalid').html(userInput + " has already been added.")
@@ -392,12 +420,9 @@ $(function () {
         socket.emit('clear');
     });
 
-    //.1yr button is highlighted upon page load.
-    $('.1y').css('border-color', '#ffc656');
-
     $('.1m').click(function() {
         timeFrame = 30;
-        socket.emit('render chart', currentStock);
+        socket.emit('render chart', currentStock, timeFrame);
         $('.1m').css('border-color', '#ffc656');
 
         $('.3m').css('border-color', '#f2f2f2');
@@ -407,7 +432,7 @@ $(function () {
 
     $('.3m').click(function() {
         timeFrame = 90;
-        socket.emit('render chart', currentStock);
+        socket.emit('render chart', currentStock, timeFrame);
         $('.3m').css('border-color', '#ffc656');
 
         $('.1m').css('border-color', '#f2f2f2');
@@ -417,7 +442,7 @@ $(function () {
 
     $('.6m').click(function() {
         timeFrame = 183;
-        socket.emit('render chart', currentStock);
+        socket.emit('render chart', currentStock, timeFrame);
         $('.6m').css('border-color', '#ffc656');
 
         $('.3m').css('border-color', '#f2f2f2');
@@ -427,7 +452,7 @@ $(function () {
 
     $('.1y').click(function() {
         timeFrame = 366;
-        socket.emit('render chart', currentStock);
+        socket.emit('render chart', currentStock, timeFrame);
         $('.1y').css('border-color', '#ffc656');
 
         $('.3m').css('border-color', '#f2f2f2');

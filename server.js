@@ -8,6 +8,7 @@ var express = require('express'),
 
 storage.initSync();
 storage.setItem('stockList', ['AMZN', 'GOOG', 'AMD', 'INTC']);
+storage.setItem('timelapse', 366);
 
 
 io.on('connection', function(socket) {
@@ -18,17 +19,17 @@ io.on('connection', function(socket) {
 		socket.emit('store stock list', x);
 	});
 
-
-	socket.emit('render chart', storedStocks);
+	console.log('TIMELAPSE: '+storage.getItem('timelapse'))
+	socket.emit('render chart', storedStocks, storage.getItem('timelapse'));
 
 	socket.emit('add stocks to side menu', storedStocks);
 
 //define socket functions
 //------------------------------------------------------------------	
 
-	socket.on('render chart', function(x) {
+	socket.on('render chart', function(x, y) {
 		io.emit('add stocks to side menu', x[x.length-1]);
-	
+		storage.setItem('timelapse', y);
 		var filteredX = [];
 		x.filter(function(item) {
 			if(filteredX.indexOf(item) == -1) {
@@ -37,7 +38,7 @@ io.on('connection', function(socket) {
 		});
 
 		console.log('rendering X to render chart:' +filteredX);
-		io.emit('render chart', filteredX);
+		io.emit('render chart', filteredX, y);
 	});
 
 	//socket.on('add stocks to side menu', function(arr) {
