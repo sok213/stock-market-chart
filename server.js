@@ -28,7 +28,16 @@ io.on('connection', function(socket) {
 
 	socket.on('render chart', function(x) {
 		io.emit('add stocks to side menu', x[x.length-1]);
-		io.emit('render chart', x);
+	
+		var filteredX = [];
+		x.filter(function(item) {
+			if(filteredX.indexOf(item) == -1) {
+				filteredX.push(item);
+			}
+		});
+
+		console.log('rendering X to render chart:' +filteredX);
+		io.emit('render chart', filteredX);
 	});
 
 	//socket.on('add stocks to side menu', function(arr) {
@@ -38,22 +47,13 @@ io.on('connection', function(socket) {
     socket.on('store stock list', function(stock) {
     	//stock is a cursor to items in storedStocks. 
     	//or currentStock
-    	
 		if(Array.isArray(stock)) {
-			//storedStocks = [];
 			stock2 = [];
-			console.log('pushing array of storedStocks: '+
-						storedStocks+' to currentStocks: '+ stock2);
 			storedStocks.filter(function(x) {
 				//this is where duplicated get added.
 				stock2.push(x);
 			});
-			console.log('END RESULT: '+stock2)
-
 		} else {
-			//this code never runs. remove.
-			console.log('pushing currentStock '+
-						stock2 + ' to storedStocks: '+ storedStocks);
 			storedStocks.push(stock);
 		}
 

@@ -132,7 +132,7 @@ $(function () {
             success: function(json){
                 //Catch errors
                 if (!json || json.Message){
-                    console.error("Error: ", json.Message);
+                    console.error("Error: ",json.Message);
                     $.ajax(this);
                     return;
                 }
@@ -140,8 +140,18 @@ $(function () {
                 var currentColor = colors[Math.floor((Math.random() * (colors.length-1)) + 0)]
                 var currentSeries = new seriesObject(this._getOHLC(json), this._getVolume(json), this.symbol, currentColor);
                 seriesOptions.push(currentSeries);
-                console.log("symbol: " + this.symbol, "Color: "+ currentColor)
-                this.render(seriesOptions);
+
+                //Code below removes all duplicate stock symbols from rendering to chart. 
+                var preventDuplicates = [];
+                var filteredSeries = [];
+                seriesOptions.filter(function(series) {
+                    if(preventDuplicates.indexOf(series.name) == -1) {
+                        preventDuplicates.push(series.name);
+                        filteredSeries.push(series);
+                    }
+                })
+                this.render(filteredSeries);
+                //end of duplication prevention code.
             },
             error: function(response,txtStatus){
                 console.log(response,txtStatus)
@@ -280,6 +290,8 @@ $(function () {
     socket.emit('store stock list', currentStock);
 //---------------------------------------------------------------------------------------
 //  React side-menu and buttons code below.
+
+    var timeFrame = 366;
     
     //Button that toggles the side menu on and off.
     $("#menu-toggle").click(function(e) {
@@ -290,9 +302,8 @@ $(function () {
 
     socket.on('render chart', function(stocks) {
         seriesOptions=[];
-        console.log('RENDERING WITH '+ stocks);
         stocks.filter(function(stock) {
-            newChart = new Markit.InteractiveChartApi(stock, 365);
+            newChart = new Markit.InteractiveChartApi(stock, timeFrame);
         });
     });
 
@@ -318,7 +329,6 @@ $(function () {
 
     socket.on('delete a stock from side-menu', function(arr) {
         $('.list-item').remove();
-        console.log(arr);
         seriesOptions = [];
         currentStock = arr;
         ReactDOM.render(
@@ -329,32 +339,100 @@ $(function () {
     
     $('#addStock').click(function(e) {
         e.preventDefault();
-        var userInput = $('form').serializeArray()[0].value.toUpperCase();
+        var userInput = $('form').serializeArray()[0].value.toUpperCase().replace(/\s/g, '');
+        var params = {input: userInput}
 
-        //Filter for form submission to prevent invalid 
-        //stock symbols or pre-existing symbols within the list.
-        if(currentStock.indexOf(userInput) == -1) {
-            //pushes the value of from submission to the currentStock array.
-            currentStock.push(userInput);
-            console.log("currentStock on form: "+ currentStock)
-            //added the form submission to the socket function "store stock list"
-            socket.emit('store stock list', userInput);
-            seriesOptions = [];
+        $.ajax({
+            async: true,
+            type: 'GET',
+            url: "http://dev.markitondemand.com/MODApis/Api/v2/Lookup/jsonp?input="+userInput,
+            dataType: "jsonp",
+            context: this,
+            success: function(json){
+                //Catch errors
+                if (!json || json.Message){
+                    console.error("Error: ", json.Message);
+                    return;
+                }
+                if(json[0] == undefined || json[0].Symbol != userInput) {
+                    $('#invalid').html(userInput + " does not exist within the database.")
+                    $('#invalid').css('visibility', 'visible');
+                } else {
+                    acceptUserInput();
+                }
+            },
+            error: function(response,txtStatus){
+                console.log(response,txtStatus)
+            }
+        });
+        var acceptUserInput = function() {
+            //Filter for form submission to prevent invalid 
+            //stock symbols or pre-existing symbols within the list.
+            if(currentStock.indexOf(userInput) == -1) {
+                //pushes the value of from submission to the currentStock array.
+                currentStock.push(userInput);
+                //added the form submission to the socket function "store stock list"
+                socket.emit('store stock list', userInput);
+                seriesOptions = [];
 
-            //takes the array of submmited stocks and passes it through 'render chart'
-            socket.emit('render chart', currentStock);
-            $('#invalid').css('visibility', 'hidden');
-        } else {
-            $('#invalid').html(userInput + " has already been added.")
-            $('#invalid').css('visibility', 'visible');
-        }
+                //takes the array of submmited stocks and passes it through 'render chart'
+                socket.emit('render chart', currentStock);
+                $('#invalid').css('visibility', 'hidden');
+            } else {
+                $('#invalid').html(userInput + " has already been added.")
+                $('#invalid').css('visibility', 'visible');
+            }
 
-        document.getElementById('stockname').value = '';
-        //Render React to the DOM whenever a new symbol is submitted.
+            document.getElementById('stockname').value = '';
+            //Render React to the DOM whenever a new symbol is submitted.
+        }   
     });
 
     $('#clearChart').click(function() {
         socket.emit('clear');
+    });
+
+    //.1yr button is highlighted upon page load.
+    $('.1y').css('border-color', '#ffc656');
+
+    $('.1m').click(function() {
+        timeFrame = 30;
+        socket.emit('render chart', currentStock);
+        $('.1m').css('border-color', '#ffc656');
+
+        $('.3m').css('border-color', '#f2f2f2');
+        $('.6m').css('border-color', '#f2f2f2');
+        $('.1y').css('border-color', '#f2f2f2');
+    });
+
+    $('.3m').click(function() {
+        timeFrame = 90;
+        socket.emit('render chart', currentStock);
+        $('.3m').css('border-color', '#ffc656');
+
+        $('.1m').css('border-color', '#f2f2f2');
+        $('.6m').css('border-color', '#f2f2f2');
+        $('.1y').css('border-color', '#f2f2f2');
+    });
+
+    $('.6m').click(function() {
+        timeFrame = 183;
+        socket.emit('render chart', currentStock);
+        $('.6m').css('border-color', '#ffc656');
+
+        $('.3m').css('border-color', '#f2f2f2');
+        $('.1m').css('border-color', '#f2f2f2');
+        $('.1y').css('border-color', '#f2f2f2');
+    });
+
+    $('.1y').click(function() {
+        timeFrame = 366;
+        socket.emit('render chart', currentStock);
+        $('.1y').css('border-color', '#ffc656');
+
+        $('.3m').css('border-color', '#f2f2f2');
+        $('.6m').css('border-color', '#f2f2f2');
+        $('.1m').css('border-color', '#f2f2f2');
     });
 
     socket.on('clear', function() {
@@ -382,7 +460,6 @@ $(function () {
             var x = this.state.stockList.stockTick[0].symbol[i];
             currentStock.splice(currentStock.indexOf(x), 1);
             if(currentStock.length == 0) {
-                console.log('CLEAR CHART');
                 socket.emit('clear');
             } else {
                 this.setState({stockList: { stockTick: [{symbol: this.props.bankOfStocks}]}});
@@ -392,8 +469,6 @@ $(function () {
         },
 
         render: function() {
-            console.log('prop.bankOfStocks: '+ this.props.bankOfStocks)
-            console.log('this.state.stockList: '+this.state.stockList.stockTick[0].symbol);
             var deleteItem = this.deleteItem;
             var stockList = this.state.stockList.stockTick[0].symbol;
             var createStockList = function(stock, i) {

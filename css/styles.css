@@ -209,3 +209,20 @@ html, body {
   color: red;
   visibility: hidden;
 }
+
+.zoom-btn {
+  border: 2px solid #E7E7E7;
+  height: 20px;
+  width: 40px;
+  margin-top: 15px;
+  margin-left: 10px;
+  background-color: #E7E7E7;
+  color: black;
+  font-size: 13px;
+  transition: 0.2s;
+  outline: none;
+}
+
+.zoom-btn:hover {
+  background-color: #f2f2f2; 
+}
