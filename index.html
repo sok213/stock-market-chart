@@ -99,9 +99,11 @@
             <div class="row" id="stockForm">
                 <form class="addStock col-lg-12">
                   <h4 id="invalid"></h4>
-                  <input type="text" id="stockname" placeholder="Enter a stock ticker symbol" name="stockname"></input>
-                  <button class="btn btn-success" id="addStock"><i class="fa fa-plus" aria-hidden="true"></i>  Stock</button>
-                  <button class="btn btn-danger" id="clearChart"><i class="fa fa-trash-o" aria-hidden="true"></i>  Clear Chart</button>
+                  <div class="row">
+                    <input type="text" id="stockname" placeholder="Enter a stock ticker symbol" name="stockname"></input>
+                    <button class="btn btn-success" id="addStock"><i class="fa fa-plus" aria-hidden="true"></i>  Stock</button>
+                    <button class="btn btn-danger" id="clearChart"><i class="fa fa-trash-o" aria-hidden="true"></i>  Clear Chart</button>
+                  </div>
                 </form>
             </div>
             
@@ -117,17 +119,6 @@
     </div>
     <!-- Application Javascript -->
     <script type="text/babel" src="js/app.js"></script>
-
-    <script>
-    var socket = io();
-
-    socket.emit('test');
-
-    //event listener to see if chat message is run??
-    socket.on('test', function(){
-      console.log('THJISIS TEST')
-    });
-
   </script>
 </body>
 

@@ -290,8 +290,9 @@ $(function () {
 
     socket.on('render chart', function(stocks) {
         seriesOptions=[];
+        console.log('RENDERING WITH '+ stocks);
         stocks.filter(function(stock) {
-            newChart = new Markit.InteractiveChartApi(stock, 360);
+            newChart = new Markit.InteractiveChartApi(stock, 365);
         });
     });
 
@@ -299,26 +300,32 @@ $(function () {
         //retrieves array from storage in server.js file.
         //pushes the array into currentStock
         if(Array.isArray(arr)) {
-            console.log('array: '+arr)
             arr.filter(function(x) {
                 currentStock.push(x)
             });
             socket.emit('store stock list', currentStock);
         } else {
-            console.log('not array: '+ arr +'pushed into: '+ currentStock)
-
             //Shitty fix for side-menu socket.io sync bug.
             if(currentStock[currentStock.length-1] == arr) {
                 currentStock.pop();
             }
             currentStock.push(arr);
-            console.log(currentStock)
         }
-
         ReactDOM.render(
             <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar')
         )
     });
+
+    socket.on('delete a stock from side-menu', function(arr) {
+        $('.list-item').remove();
+        console.log(arr);
+        seriesOptions = [];
+        currentStock = arr;
+        ReactDOM.render(
+            <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar')
+        )
+        socket.emit('render chart', arr);
+    })
     
     $('#addStock').click(function(e) {
         e.preventDefault();
@@ -374,11 +381,13 @@ $(function () {
         deleteItem: function(i) {
             var x = this.state.stockList.stockTick[0].symbol[i];
             currentStock.splice(currentStock.indexOf(x), 1);
-            this.setState({stockList: { stockTick: [{symbol: this.props.bankOfStocks}]}});
-            seriesOptions = [];
-            socket.emit('store stock list', $('form').serializeArray()[0].value.toUpperCase());
             if(currentStock.length == 0) {
-                $('#chartContainer').empty();
+                console.log('CLEAR CHART');
+                socket.emit('clear');
+            } else {
+                this.setState({stockList: { stockTick: [{symbol: this.props.bankOfStocks}]}});
+                seriesOptions = [];
+                socket.emit('delete stock item', x);
             }
         },
 

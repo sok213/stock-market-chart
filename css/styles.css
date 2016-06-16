@@ -204,7 +204,8 @@ html, body {
 }
 
 #invalid {
-  margin-top: -20px;
+  margin-top: -25px;
+  height: 20px;
   color: red;
   visibility: hidden;
 }

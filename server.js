@@ -27,8 +27,6 @@ io.on('connection', function(socket) {
 //------------------------------------------------------------------	
 
 	socket.on('render chart', function(x) {
-		console.log('rendering chart with: '+x)
-		console.log('adding: '+x[x.length-1]+' to "add stocks to side menu"')
 		io.emit('add stocks to side menu', x[x.length-1]);
 		io.emit('render chart', x);
 	});
@@ -43,33 +41,47 @@ io.on('connection', function(socket) {
     	
 		if(Array.isArray(stock)) {
 			//storedStocks = [];
+			stock2 = [];
 			console.log('pushing array of storedStocks: '+
-						storedStocks+' to currentStocks: '+ stock);
+						storedStocks+' to currentStocks: '+ stock2);
 			storedStocks.filter(function(x) {
 				//this is where duplicated get added.
-				stock.push(x);
+				stock2.push(x);
 			});
+			console.log('END RESULT: '+stock2)
 
 		} else {
 			//this code never runs. remove.
 			console.log('pushing currentStock '+
-						stock + ' to storedStocks: '+ storedStocks);
+						stock2 + ' to storedStocks: '+ storedStocks);
 			storedStocks.push(stock);
 		}
 
 		//Storing items in storedStocks to stockList.
 		storage.setItem('stockList', storedStocks);
 		console.log('setting stockList to: '+ storedStocks);
+		io.emit('store stock list', stock);
+	});
+
+
+
+	socket.on('delete stock item', function(stock) {
+		storedStocks.splice(storedStocks.indexOf(stock), 1);
+		console.log('deleted: '+stock+'storedStocks: '
+					+ storedStocks);
+		storage.setItem('stockList', storedStocks);
+		io.emit('delete a stock from side-menu', storedStocks);
 	});
 
 	socket.on('empty list', function() {
 		storedStocks = [];
 		storage.setItem('stockList', storedStocks);
+		io.emit('empty list');
 	});
 
 	socket.on('clear', function() {
 		io.emit('clear');
-	})
+	});
 });
 
 app.use(express.static('./'));
