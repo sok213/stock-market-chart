@@ -362,7 +362,7 @@ $(function () {
         ReactDOM.render(
             <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar')
         )
-        socket.emit('render chart', arr);
+        socket.emit('render chart', arr, timeFrame);
     })
     
     $('#addStock').click(function(e) {

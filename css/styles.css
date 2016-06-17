@@ -3,7 +3,8 @@
 
 html,
 body {
-  height: 100%;
+  max-height: 100%;
+  overflow-x: hidden !important; 
   /* The html and body elements cannot have any padding or margin. */
 }
 
@@ -23,6 +24,55 @@ body {
   height: 60px;
   background-color: #ecf2f9;
 }
+
+.time-frame, h1 {
+  min-width: 500px;
+}
+
+@media screen and (max-width: 480px) {
+    h1 {
+      font-size: 20px;
+    }
+
+    .chart {
+        height: 200px;
+    }
+
+    footer {
+      visibility: hidden;
+    }
+
+    .top {
+      margin-top: 0px !important;
+    }
+
+    #stockname {
+      width: 100%;
+    }
+
+    #stockForm {
+      margin-top: -20px;
+      min-width: 400px;
+    }
+
+    #addStock {
+      position: relative;
+    }
+
+    #clearChart {
+      float: center;
+      left: -5px;
+      width: 100%;
+      position: relative;
+      margin-top: 5px;
+    }
+    
+    #invalid {
+      font-size: 20px;
+      margin-top: -10px !important;
+    }
+}
+
 
 .navbar {
   background-color: #19324d;
@@ -69,6 +119,7 @@ h1 {
 #wrap > .container {
   padding: 60px 15px 0;
 }
+
 .container .credit {
   margin: 20px 0;
 }
@@ -107,10 +158,6 @@ code {
 .sidebar-brand {
   border-bottom: thin solid #369b89;
   background-color: #369b89;
-}
-
-html, body {
-  overflow-x: hidden;
 }
 
 .overline {

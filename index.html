@@ -89,8 +89,8 @@
                     <a href="#menu-toggle" class="btn btn-primary list-btn" id="menu-toggle">Show stock list</a>
                 </div>
 
-                <div class="col-lg-12 text-left">
-                    <a style="color: #4f4f4f;"><i class="fa fa-calendar" aria-hidden="true"></i>  Time frame: </a>
+                <div class="col-lg-12 text-left time-frame">
+                    <a style="color: #4f4f4f; pointer-events: none;"><i class="fa fa-calendar" aria-hidden="true"></i>  Time frame: </a>
                     <button class="zoom-btn 1m">1m</button>
                     <button class="zoom-btn 3m">3m</button>
                     <button class="zoom-btn 6m">6m</button>
@@ -106,7 +106,7 @@
             <!-- Add stock form -->
             <div class="row" id="stockForm">
                 <form class="addStock col-lg-12">
-                  <h4 id="invalid">aggdasf</h4>
+                  <h4 id="invalid"></h4>
                   <div class="row">
                     <input type="text" id="stockname" placeholder="Enter a stock ticker symbol" name="stockname" maxlength="5"></input>
                     <button class="btn btn-success" id="addStock"><i class="fa fa-plus" aria-hidden="true"></i>  Stock</button>
