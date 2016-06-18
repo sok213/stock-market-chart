@@ -370,7 +370,7 @@ $(function () {
         var userInput = $('form').serializeArray()[0].value.toUpperCase().replace(/\s/g, '');
         var params = {input: userInput}
 
-        /*$.ajax({
+        $.ajax({
             async: true,
             type: 'GET',
             url: "//dev.markitondemand.com/MODApis/Api/v2/Lookup/jsonp?input="+userInput,
@@ -392,7 +392,7 @@ $(function () {
             error: function(response,txtStatus){
                 console.log(response,txtStatus)
             }
-        });*/
+        });
         var acceptUserInput = function() {
             //Filter for form submission to prevent invalid 
             //stock symbols or pre-existing symbols within the list.
@@ -413,9 +413,7 @@ $(function () {
 
             document.getElementById('stockname').value = '';
             //Render React to the DOM whenever a new symbol is submitted.
-        }
-
-        acceptUserInput();
+        }   
     });
 
     $('#clearChart').click(function() {
