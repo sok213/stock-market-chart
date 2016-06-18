@@ -126,7 +126,7 @@ $(function () {
             async: true,
             type: 'GET',
             data: params,
-            url: "https://dev.markitondemand.com/Api/v2/InteractiveChart/jsonp",
+            url: "http://dev.markitondemand.com/Api/v2/InteractiveChart/jsonp",
             dataType: "jsonp",
             context: this,
             success: function(json){
@@ -373,7 +373,7 @@ $(function () {
         $.ajax({
             async: true,
             type: 'GET',
-            url: "https://dev.markitondemand.com/MODApis/Api/v2/Lookup/jsonp?input="+userInput,
+            url: "http://dev.markitondemand.com/MODApis/Api/v2/Lookup/jsonp?input="+userInput,
             dataType: "jsonp",
             context: this,
             success: function(json){
