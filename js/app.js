@@ -1,5 +1,13 @@
 
 $(function () {
+    window.onload=function(){
+    $(function(){
+        if(window.location.protocol==="https:") {
+                window.location.protocol="http";
+            }
+        });
+    }
+
     var Markit = {},
         seriesOptions = [],
         plotLineColors = [],
