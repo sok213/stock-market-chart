@@ -5,7 +5,7 @@ var express = require('express'),
 	storage = require('node-persist'),
 	storedStocks = [];
 
-var port = app.listen(process.env.PORT || 5000);
+var port = process.env.PORT || 5000;
 
 storage.initSync();
 storage.setItem('stockList', ['AMZN', 'GOOG', 'AMD', 'INTC']);
@@ -89,5 +89,5 @@ io.on('connection', function(socket) {
 app.use(express.static('./'));
 
 http.listen(port, function(){
-  console.log('listening on **:' + port);
+  console.log('listening on *:' + port);
 });
