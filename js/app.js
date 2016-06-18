@@ -126,7 +126,7 @@ $(function () {
             async: true,
             type: 'GET',
             data: params,
-            url: "//dev.markitondemand.com/Api/v2/InteractiveChart/jsonp",
+            url: "http://dev.markitondemand.com/Api/v2/InteractiveChart/jsonp",
             dataType: "jsonp",
             context: this,
             success: function(json){
@@ -373,7 +373,7 @@ $(function () {
         $.ajax({
             async: true,
             type: 'GET',
-            url: "//dev.markitondemand.com/MODApis/Api/v2/Lookup/jsonp?input="+userInput,
+            url: "http://dev.markitondemand.com/MODApis/Api/v2/Lookup/jsonp?input="+userInput,
             dataType: "jsonp",
             context: this,
             success: function(json){
@@ -463,9 +463,11 @@ $(function () {
     socket.on('clear', function() {
         currentStock = [];
         socket.emit('empty list');
-        chart.series.filter(function(data) {
-            data.setData([]);
-        });
+        if(chart.series) {
+            chart.series.filter(function(data) {
+                data.setData([]);
+            });
+        }
         $('.list-item').remove();
         $('#chartContainer').empty();
         ReactDOM.render(
