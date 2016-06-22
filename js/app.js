@@ -429,43 +429,51 @@ $(function () {
     });
 
     $('.1m').click(function() {
-        timeFrame = 30;
-        socket.emit('render chart', currentStock, timeFrame);
-        $('.1m').css('border-color', '#ffc656');
+        if(currentStock.length > 0){
+            timeFrame = 30;
+            socket.emit('render chart', currentStock, timeFrame);
+            $('.1m').css('border-color', '#ffc656');
 
-        $('.3m').css('border-color', '#f2f2f2');
-        $('.6m').css('border-color', '#f2f2f2');
-        $('.1y').css('border-color', '#f2f2f2');
+            $('.3m').css('border-color', '#f2f2f2');
+            $('.6m').css('border-color', '#f2f2f2');
+            $('.1y').css('border-color', '#f2f2f2');
+        }
     });
 
     $('.3m').click(function() {
-        timeFrame = 90;
-        socket.emit('render chart', currentStock, timeFrame);
-        $('.3m').css('border-color', '#ffc656');
+        if(currentStock.length > 0){
+            timeFrame = 90;
+            socket.emit('render chart', currentStock, timeFrame);
+            $('.3m').css('border-color', '#ffc656');
 
-        $('.1m').css('border-color', '#f2f2f2');
-        $('.6m').css('border-color', '#f2f2f2');
-        $('.1y').css('border-color', '#f2f2f2');
+            $('.1m').css('border-color', '#f2f2f2');
+            $('.6m').css('border-color', '#f2f2f2');
+            $('.1y').css('border-color', '#f2f2f2');
+        }
     });
 
     $('.6m').click(function() {
-        timeFrame = 183;
-        socket.emit('render chart', currentStock, timeFrame);
-        $('.6m').css('border-color', '#ffc656');
+        if(currentStock.length > 0){
+            timeFrame = 183;
+            socket.emit('render chart', currentStock, timeFrame);
+            $('.6m').css('border-color', '#ffc656');
 
-        $('.3m').css('border-color', '#f2f2f2');
-        $('.1m').css('border-color', '#f2f2f2');
-        $('.1y').css('border-color', '#f2f2f2');
+            $('.3m').css('border-color', '#f2f2f2');
+            $('.1m').css('border-color', '#f2f2f2');
+            $('.1y').css('border-color', '#f2f2f2');
+        }
     });
 
     $('.1y').click(function() {
-        timeFrame = 366;
-        socket.emit('render chart', currentStock, timeFrame);
-        $('.1y').css('border-color', '#ffc656');
+        if(currentStock.length > 0){
+            timeFrame = 366;
+            socket.emit('render chart', currentStock, timeFrame);
+            $('.1y').css('border-color', '#ffc656');
 
-        $('.3m').css('border-color', '#f2f2f2');
-        $('.6m').css('border-color', '#f2f2f2');
-        $('.1m').css('border-color', '#f2f2f2');
+            $('.3m').css('border-color', '#f2f2f2');
+            $('.6m').css('border-color', '#f2f2f2');
+            $('.1m').css('border-color', '#f2f2f2');
+        }
     });
 
     socket.on('clear', function() {
