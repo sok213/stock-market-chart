@@ -63,9 +63,25 @@ html, body {
       visibility: hidden;
     }
 
+    #sidebar2 ul li {
+      margin-bottom: 10px !important;
+    }
+
+    .icon-margin {
+      margin-top: 1px !important;
+      margin-left: 0px !important;
+      transition: 0.5s !important;
+    }
+
     .delete-btn {
-      position: relative;
+      text-align: center !important;
+      position: absolute;
       float: right !important;
+      border-radius: 20px 20px 20px 20px !important;
+      right: 10px;
+      margin-top: 5px !important;
+      height: 25px !important;
+      width: 25px !important;
     }
 
     #stockname {
