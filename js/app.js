@@ -105,6 +105,12 @@ $(function () {
                     "YellowGreen"
                     ];
 
+    socket.on('new connection', function() {
+        $('.list-item').remove();
+    });
+
+    socket.emit('new connection');
+
     function seriesObject(ohlc, volume, symbol, color) {
         this.type = 'spline',
         this.name = symbol, 

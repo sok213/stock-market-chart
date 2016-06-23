@@ -32,6 +32,7 @@ body {
 @media screen and (max-width: 480px) {
     h1 {
       font-size: 20px;
+      margin-top: -35px;
     }
 
     .chart {
@@ -39,40 +40,36 @@ body {
     }
 
     footer {
+      height: 0px;
       visibility: hidden;
     }
 
-    .top {
-      margin-top: 0px !important;
+    #invalid {
+      float: center !important;
+      width: 360px;
+      font-size: 15px;
+      margin-top: -10px !important;
     }
 
     #stockname {
-      width: 100%;
+      margin-left: 0px !important;
+      width: 100% !important;
+      float: center !important;
     }
 
-    #stockForm {
-      margin-top: -20px;
-      min-width: 400px;
-    }
-
-    #addStock {
+    .btn-success {
       position: relative;
-    }
-
-    #clearChart {
       float: center;
-      left: -5px;
-      width: 100%;
-      position: relative;
-      margin-top: 5px;
+      width: 100% !important;
     }
-    
-    #invalid {
-      font-size: 20px;
-      margin-top: -10px !important;
-    }
-}
 
+    .btn-danger {
+      position: relative;
+      float: center;
+      width: 100% !important;
+    }
+
+}
 
 .navbar {
   background-color: #19324d;
@@ -166,7 +163,9 @@ code {
 }
 
 #stockname {
-  padding-left: 10px;
+  margin-left: -15px;
+  float: left;
+  text-align: center;
   padding-top: 3px !important;
   margin-bottom: 5px;
   font-size: 17px !important;
@@ -180,17 +179,17 @@ code {
 }
 
 .btn-success {
-    height: 30px;
-    margin-top: -5px;
-    margin-left: 5px;
-    outline: none !important;
-    border-radius: 0px 0px 0px 0px;
+  width: 185px;
+  float: left;
+  height: 30px;
+  outline: none !important;
+  border-radius: 0px 0px 0px 0px;
 }
 
 .btn-danger {
+  width: 185px;
+  float: left;
   height: 30px;
-  margin-top: -5px;
-  margin-left: 5px;
   outline: none !important;
   border-radius: 0px 0px 0px 0px;
 }

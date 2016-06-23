@@ -107,11 +107,13 @@
             <div class="row" id="stockForm">
                 <form class="addStock col-lg-12">
                   <h4 id="invalid"></h4>
-                  <div class="row">
+                  <div class="row col-md-12">
                     <input type="text" id="stockname" placeholder="Enter a stock ticker symbol" name="stockname" maxlength="5"></input>
-                    <button class="btn btn-success" id="addStock"><i class="fa fa-plus" aria-hidden="true"></i>  Stock</button>
-                    <button class="btn btn-danger" id="clearChart"><i class="fa fa-trash-o" aria-hidden="true"></i>  Clear Chart</button>
                   </div>
+                    <div class="row">
+                        <button class="btn btn-success col-md-6 col-xs-12" id="addStock"><i class="fa fa-plus" aria-hidden="true"></i>  Stock</button>
+                        <button class="btn btn-danger col-md-6 col-xs-12" id="clearChart"><i class="fa fa-trash-o" aria-hidden="true"></i>  Clear Chart</button>
+                    </div>
                 </form>
             </div>
             

@@ -13,6 +13,7 @@ storage.setItem('timelapse', 366);
 
 
 io.on('connection', function(socket) {
+	socket.emit('new connection');
 	console.log("User has connected");
 	storedStocks = storage.getItem('stockList');
 	
