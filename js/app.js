@@ -109,8 +109,6 @@ $(function () {
         $('.list-item').remove();
     });
 
-    socket.emit('new connection');
-
     function seriesObject(ohlc, volume, symbol, color) {
         this.type = 'spline',
         this.name = symbol, 
@@ -364,18 +362,16 @@ $(function () {
             }
             currentStock.push(arr);
         }
-        ReactDOM.render(
-            <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar')
-        )
+        ReactDOM.render( <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar'));
+        ReactDOM.render( <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar2'));
     });
 
     socket.on('delete a stock from side-menu', function(arr) {
         $('.list-item').remove();
         seriesOptions = [];
         currentStock = arr;
-        ReactDOM.render(
-            <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar')
-        )
+        ReactDOM.render( <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar'));
+        ReactDOM.render( <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar2'));
         socket.emit('render chart', arr, timeFrame);
     })
     
@@ -492,9 +488,8 @@ $(function () {
         }
         $('.list-item').remove();
         $('#chartContainer').empty();
-        ReactDOM.render(
-            <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar')
-        )
+        ReactDOM.render( <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar'));
+        ReactDOM.render( <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar2'));
     })
 
     //Define React SideBarList Class

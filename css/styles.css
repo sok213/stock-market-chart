@@ -1,8 +1,7 @@
 /* Sticky footer styles
 -------------------------------------------------- */
 
-html,
-body {
+html, body {
   max-height: 100%;
   overflow-x: hidden !important; 
   /* The html and body elements cannot have any padding or margin. */
@@ -44,11 +43,29 @@ body {
       visibility: hidden;
     }
 
+    .navbar {
+      visibility: visible !important;
+    }
+
+   .time-frame {
+      margin-top: -40px;
+    }
+
     #invalid {
       float: center !important;
       width: 360px;
       font-size: 15px;
-      margin-top: -10px !important;
+      margin-top: -30px !important;
+      margin-bottom: 0px !important;
+    }
+
+    .list-btn {
+      visibility: hidden;
+    }
+
+    .delete-btn {
+      position: relative;
+      float: right !important;
     }
 
     #stockname {
@@ -103,6 +120,10 @@ body {
 /* Custom page CSS
 -------------------------------------------------- */
 /* Not required for template or sticky footer method. */
+
+.navbar {
+  visibility: hidden;
+}
 
 h1 { 
   color: #9D9DA8;
@@ -250,6 +271,7 @@ code {
 }
 
 #invalid {
+  float: left;
   margin-top: -25px;
   height: 20px;
   color: red;
