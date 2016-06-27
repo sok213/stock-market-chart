@@ -9,7 +9,7 @@
 6 silly lifecycle stockmarket@1.0.0~prestart: no script for prestart, continuing
 7 info lifecycle stockmarket@1.0.0~start: stockmarket@1.0.0
 8 verbose lifecycle stockmarket@1.0.0~start: unsafe-perm in lifecycle true
-9 verbose lifecycle stockmarket@1.0.0~start: PATH: /home/cuntdestroyer/npm/lib/node_modules/npm/bin/node-gyp-bin:/home/cuntdestroyer/Documents/projects/stockmarket/node_modules/.bin:/usr/local/bin:/home/cuntdestroyer/npm/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/home/cuntdestroyer/.node/bin
+9 verbose lifecycle stockmarket@1.0.0~start: PATH: /home/cuntdestroyer/npm/lib/node_modules/npm/bin/node-gyp-bin:/home/cuntdestroyer/Documents/projects/stockmarket/node_modules/.bin:/usr/local/bin:/usr/local/heroku/bin:/home/cuntdestroyer/npm/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/home/cuntdestroyer/.node/bin
 10 verbose lifecycle stockmarket@1.0.0~start: CWD: /home/cuntdestroyer/Documents/projects/stockmarket
 11 silly lifecycle stockmarket@1.0.0~start: Args: [ '-c', 'node server.js' ]
 12 silly lifecycle stockmarket@1.0.0~start: Returned: code: 1  signal: null
