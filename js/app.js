@@ -1,15 +1,11 @@
 
 $(function () {
-    /*window.onload=function(){
+    window.onload=function(){
     $(function(){
         if(window.location.protocol==="https:") {
                 window.location.protocol="http";
             }
         });
-    }*/
-
-    if (window.location.protocol != "http:") {
-        window.location.href = "http:" + window.location.href.substring(window.location.protocol.length);
     }
 
     var Markit = {},
