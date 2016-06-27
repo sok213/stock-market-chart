@@ -1,12 +1,16 @@
 
 $(function () {
     window.onload=function(){
-    $(function(){
+    /*$(function(){
         if(window.location.protocol==="https:") {
                 window.location.protocol="http";
             }
         });
-    }
+    }*/
+
+    if(window.location.protocol==="https:") {
+                window.location.protocol="http";
+            }
 
     var Markit = {},
         seriesOptions = [],
