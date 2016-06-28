@@ -1,7 +1,6 @@
 $(function () {
 
-    var Markit = {},
-        seriesOptions = [],
+    var seriesOptions = [],
         plotLineColors = [],
         socket = io(),
         colors = [  "Bisque",
@@ -101,197 +100,13 @@ $(function () {
         $('.list-item').remove();
     });
 
-    function seriesObject(ohlc, volume, symbol, color) {
+    function seriesObject(ohlc, symbol, color) {
         this.type = 'spline',
         this.name = symbol, 
         this.data = ohlc,
         this.color = color
     };
 
-    /**
-     * Define the InteractiveChartApi.
-     * First argument is symbol (string) for the quote. Examples: AAPL, MSFT, JNJ, GOOG.
-     * Second argument is duration (int) for how many days of history to retrieve.
-     */
-    Markit.InteractiveChartApi = function(symbol,duration){
-        this.symbol = symbol.toUpperCase();
-        this.duration = duration;
-        this.PlotChart();
-    };
-
-    //Define PlotChart prototype that makes the JSONP call for the stock.
-    Markit.InteractiveChartApi.prototype.PlotChart = function(){
-        var params = {
-            parameters: JSON.stringify( this.getInputParams() )
-        }
-
-        //Make JSON request for timeseries data
-        $.ajax({
-            async: true,
-            type: 'GET',
-            data: params,
-            url: "http://dev.markitondemand.com/Api/v2/InteractiveChart/jsonp",
-            headers: { 
-                'Origin': 'https://dev.markitondemand.com/MODApis'
-            },
-            dataType: "jsonp",
-            context: this,
-            success: function(json){
-                //Catch errors
-                if (!json || json.Message){
-                    console.error("Error: ",json.Message);
-                    $.ajax(this);
-                    return;
-                }
-
-                var currentColor = colors[Math.floor((Math.random() * (colors.length-1)) + 0)]
-                var currentSeries = new seriesObject(this._getOHLC(json), this._getVolume(json), this.symbol, currentColor);
-                seriesOptions.push(currentSeries);
-
-                //Code below removes all duplicate stock symbols from rendering to chart. 
-                var preventDuplicates = [];
-                var filteredSeries = [];
-                seriesOptions.filter(function(series) {
-                    if(preventDuplicates.indexOf(series.name) == -1) {
-                        preventDuplicates.push(series.name);
-                        filteredSeries.push(series);
-                    }
-                })
-                this.render(filteredSeries);
-                //end of duplication prevention code.
-            },
-            error: function(response,txtStatus){
-                console.log(response,txtStatus)
-            }
-        });
-    };
-
-    //getInputParams processes the symbol and duration data and 
-    //sets it to the corresponding attributes.Then, returns the object for use.
-    Markit.InteractiveChartApi.prototype.getInputParams = function(){
-        return {  
-            Normalized: false,
-            NumberOfDays: this.duration,
-            DataPeriod: "Day",
-            Elements: [
-                {
-                    Symbol: this.symbol,
-                    Type: "price",
-                    Params: ["ohlc"] //ohlc, c = close only
-                },
-                {
-                    Symbol: this.symbol,
-                    Type: "volume"
-                }
-            ]
-            //,LabelPeriod: 'Week',
-            //LabelInterval: 1
-        }
-    };
-
-    //sets the the correct date format to use in the chart.
-    Markit.InteractiveChartApi.prototype._fixDate = function(dateIn) {
-        var dat = new Date(dateIn);
-        return Date.UTC(dat.getFullYear(), dat.getMonth(), dat.getDate());
-    };
-
-    //Returns chartSeries. The data points for the stock.
-    Markit.InteractiveChartApi.prototype._getOHLC = function(json) {
-        var dates = json.Dates || [];
-        var elements = json.Elements || [];
-        var chartSeries = [];
-
-        if (elements[0]){
-
-            for (var i = 0, datLen = dates.length; i < datLen; i++) {
-                var dat = this._fixDate( dates[i] );
-                var pointData = [
-                    dat,
-                    elements[0].DataSeries['open'].values[i],
-                    elements[0].DataSeries['high'].values[i],
-                    elements[0].DataSeries['low'].values[i],
-                    elements[0].DataSeries['close'].values[i]
-                ];
-                chartSeries.push( pointData );
-            };
-        }
-        return chartSeries;
-    };
-
-    //Returns chartSeries. The value of each point.
-    Markit.InteractiveChartApi.prototype._getVolume = function(json) {
-        var dates = json.Dates || [];
-        var elements = json.Elements || [];
-        var chartSeries = [];
-
-        if (elements[1]){
-
-            for (var i = 0, datLen = dates.length; i < datLen; i++) {
-                var dat = this._fixDate( dates[i] );
-                var pointData = [
-                    dat,
-                    elements[1].DataSeries['volume'].values[i]
-                ];
-                chartSeries.push( pointData );
-            };
-        }
-        return chartSeries;
-    };
-    var chart = {};
-
-
-    //renders the chart with all the neccesary data produces from other 
-    //functions.
-    Markit.InteractiveChartApi.prototype.render = function(seriesCollection) {
-        //set the Highcharts date format for use.
-        console.log(seriesCollection);
-        Highcharts.dateFormat("Month: %m Day: %d Year: %Y", 20, false);
-        // create the chart
-        chart = new Highcharts.Chart({
-            chart: {
-                renderTo: 'chartContainer',
-                marginLeft: 50
-            },
-            title: { text: 'Historical Price' },
-            marginBottom: 100,
-            yAxis: {
-                opposite: true,
-            
-                title: {
-                    text: ''
-                },
-                labels: {
-                    formatter: function () {
-                        return (this.value > 0 ? ' + ' : '') + this.value + '%';
-                    }
-                },
-                plotLines: [{
-                    value: 0,
-                    width: 2,
-                    color: 'silver'
-                }]
-            },
-            plotOptions: {
-                series: { compare: 'percent' }
-            },
-            xAxis: {
-                type: 'datetime',
-                tickInterval: 7 * 24 * 36e5, // one week
-                labels: {
-                    format: '{value: %m/%d/%Y}',
-                    align: 'right',
-                    rotation: -30
-                }
-            },
-            tooltip: { valueDecimals: 2 },
-            //takes in the stock data and charts it.
-            series: seriesCollection,
-            exporting: { enabled: false },
-            credits: { enabled:false }
-        });
-    };
-
-    var newChart;
     var currentStock = [];
 
     //this is what causes array to be blank in some cases?
@@ -310,9 +125,9 @@ $(function () {
 
     socket.on('render chart', function(stocks, time) {
         seriesOptions=[];
-        stocks.filter(function(stock) {
+        /*stocks.filter(function(stock) {
             newChart = new Markit.InteractiveChartApi(stock, time);
-        });
+        });*/
 
         //checks to see which time frame is activated on the chart.
         //Changes the activated one to have an orange outline.
@@ -370,38 +185,86 @@ $(function () {
         ReactDOM.render( <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar2'));
         socket.emit('render chart', arr, timeFrame);
     })
+
+    var chart = {};
+
+    function renderChart(seriesCollection) {
+        //set the Highcharts date format for use.
+        Highcharts.dateFormat("Month: %m Day: %d Year: %Y", 20, false);
+        // create the chart
+        chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'chartContainer',
+                marginLeft: 50
+            },
+            title: { text: 'Historical Price' },
+            marginBottom: 100,
+            yAxis: {
+                opposite: false,
+            
+                title: {
+                    text: ''
+                },
+                labels: {
+                    formatter: function () {
+                        return (this.value > 0 ? ' + ' : '') + this.value + '%';
+                    }
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 2,
+                    color: 'silver'
+                }]
+            },
+            plotOptions: {
+                series: { compare: 'percent' }
+            },
+            xAxis: {
+                type: 'datetime',
+                tickInterval: 7 * 24 * 36e5, // one week
+                labels: {
+                    format: '{value: %m/%d/%Y}',
+                    align: 'right',
+                    rotation: -30
+                }
+            },
+            tooltip: { valueDecimals: 2 },
+            //takes in the stock data and charts it.
+            series: seriesCollection,
+            exporting: { enabled: false },
+            credits: { enabled:false }
+        });
+    }
+
+
     
     $('#addStock').click(function(e) {
         e.preventDefault();
         var userInput = $('form').serializeArray()[0].value.toUpperCase().replace(/\s/g, '');
-        var params = {input: userInput}
 
         $.ajax({
-            async: true,
             type: 'GET',
-            url: "http://dev.markitondemand.com/MODApis/Api/v2/Lookup/jsonp?input="+userInput,
-            dataType: "jsonp",
-            context: this,
-            headers: { 
-                'Origin': 'https://dev.markitondemand.com/MODApis'
+            url: 'https://www.quandl.com/api/v3/datasets/WIKI/'+userInput+'.json?api_key=V4BCHbABAxxzqfHo-miH&start_date=2013-01-01&end_date=2016-03-06',
+            dataType: 'json',
+            contentType: 'text/plain',
+            xhrFields: {
+                    withCredentials: false
             },
-            success: function(json){
-                //Catch errors
-                if (!json || json.Message){
-                    console.error("Error: ", json.Message);
-                    return;
+            success: function(data) {
+                if(!data) {
+                    console.error('Error: ', data.message);
                 }
-                if(json[0] == undefined || json[0].Symbol != userInput) {
-                    $('#invalid').html(userInput + " does not exist within the database.")
-                    $('#invalid').css('visibility', 'visible');
-                } else {
-                    acceptUserInput();
-                }
+                console.log(data.dataset.data);
+                var currentColor = colors[Math.floor((Math.random() * (colors.length-1)) + 0)];
+                var currentSeries = [new seriesObject(data.dataset.data.reverse(), userInput, currentColor)];
+                console.log(currentSeries);
+                renderChart(currentSeries);
             },
-            error: function(response,txtStatus){
-                console.log(response,txtStatus)
+            error: function(response, txtStatus) {
+                console.log(response, txtStatus);
             }
         });
+
         var acceptUserInput = function() {
             //Filter for form submission to prevent invalid 
             //stock symbols or pre-existing symbols within the list.
