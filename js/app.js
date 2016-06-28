@@ -132,7 +132,7 @@ $(function () {
             data: params,
             url: "//dev.markitondemand.com/Api/v2/InteractiveChart/jsonp",
             headers: { 
-                'Origin': '//dev.markitondemand.com/MODApis'
+                'Origin': 'http://dev.markitondemand.com/MODApis'
             },
             dataType: "jsonp",
             context: this,
@@ -382,7 +382,7 @@ $(function () {
             dataType: "jsonp",
             context: this,
             headers: { 
-                'Origin': '//dev.markitondemand.com/MODApis'
+                'Origin': 'http://dev.markitondemand.com/MODApis'
             },
             success: function(json){
                 //Catch errors
