@@ -127,6 +127,7 @@ $(function () {
 
         //Make JSON request for timeseries data
         $.ajax({
+            Origin: 'http://dev.markitondemand.com',
             async: true,
             type: 'GET',
             data: params,
@@ -373,6 +374,7 @@ $(function () {
         var params = {input: userInput}
 
         $.ajax({
+            Origin: 'http://dev.markitondemand.com',
             async: true,
             type: 'GET',
             url: "http://dev.markitondemand.com/MODApis/Api/v2/Lookup/jsonp?input="+userInput,
