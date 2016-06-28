@@ -127,11 +127,11 @@ $(function () {
 
         //Make JSON request for timeseries data
         $.ajax({
-            Origin: 'http://dev.markitondemand.com',
             async: true,
             type: 'GET',
             data: params,
             url: "http://dev.markitondemand.com/Api/v2/InteractiveChart/jsonp",
+            headers: { 'Origin': 'http://dev.markitondemand.com'},
             dataType: "jsonp",
             context: this,
             success: function(json){
@@ -374,12 +374,12 @@ $(function () {
         var params = {input: userInput}
 
         $.ajax({
-            Origin: 'http://dev.markitondemand.com',
             async: true,
             type: 'GET',
             url: "http://dev.markitondemand.com/MODApis/Api/v2/Lookup/jsonp?input="+userInput,
             dataType: "jsonp",
             context: this,
+            headers: { 'Origin': 'http://dev.markitondemand.com'},
             success: function(json){
                 //Catch errors
                 if (!json || json.Message){
