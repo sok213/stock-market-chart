@@ -135,7 +135,7 @@ $(function () {
         });
         //checks to see which time frame is activated on the chart.
         //Changes the activated one to have an orange outline.
-        if(time == 30) {
+        if(time == 31) {
             $('.1m').css('border-color', '#ffc656');
 
             $('.3m').css('border-color', '#f2f2f2');
