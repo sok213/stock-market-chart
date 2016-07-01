@@ -181,15 +181,19 @@ $(function () {
         //Function that adds a '0' to dates with single digit numbers
         //in order to pass URL formatting requirements.
         function correct(x) {
-            var monthAndDay = [x.split('-')[1], x.split('-')[2] ];
+            var month = x.split('-')[1];
+            var day = x.split('-')[2]; 
             var result = [x.split('-')[0]];
-            monthAndDay.filter(function(n) {
-                if(n.length < 2) {
-                    result.push('0' + n)
-                } else {
-                    result.push(n);
-                }
-            })
+            
+            //if month only has one digit i.e "2" instead of "02",
+            //add a "0" in front of the digit.
+            if(month.length < 2) {
+                result.push('0' + month)
+            } else {
+                result.push(month);
+            }
+            //day will always be the first of the month.
+            result.push('01');
             return(result.join('-'))
         }
 
