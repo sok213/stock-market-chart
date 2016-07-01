@@ -110,6 +110,7 @@ $(function () {
 
 //---------------------------------------------------------------------------------------
 //  React side-menu and buttons code below.
+    console.log("Hey, don't look in here...")
 
     
     //Button that toggles the side menu on and off.
@@ -130,7 +131,6 @@ $(function () {
         });
 
         excludeDuplicates.filter(function(stock) {
-            console.log('Running through ajax: '+stock)
             quandlCall(stock, time);
         });
         //checks to see which time frame is activated on the chart.
@@ -341,7 +341,6 @@ $(function () {
             socket.emit('store stock list', currentStock);
         }
 
-        console.log('This is currentStock: '+arr)
         ReactDOM.render( <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar'));
         ReactDOM.render( <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar2'));
     });
@@ -383,9 +382,7 @@ $(function () {
             
             var x = this.state.stockList.stockTick[0].symbol[i];
             currentStock.splice(currentStock.indexOf(x), 1);
-            console.log("CURRENTSTOCK.LENGTH: "+currentStock.length)
             if(currentStock.length == 0) {
-                console.log('VALID')
                 socket.emit('clear');
             } else {
                 this.setState({stockList: { stockTick: [{symbol: this.props.bankOfStocks}]}});
@@ -395,7 +392,6 @@ $(function () {
         },
 
         render: function() {
-            console.log('BANK OF STOCKS: '+JSON.stringify(this.state.stockList));
             var deleteItem = this.deleteItem;
             var stockList = this.state.stockList.stockTick[0].symbol;
             var createStockList = function(stock, i) {
