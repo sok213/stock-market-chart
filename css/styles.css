@@ -54,7 +54,7 @@ html, body {
     #invalid {
       float: center !important;
       width: 360px;
-      font-size: 15px;
+      font-size: 20px;
       margin-top: -30px !important;
       margin-bottom: 0px !important;
     }
@@ -201,9 +201,11 @@ code {
 
 #stockname {
   margin-left: -15px;
+  position: relative;
   float: left;
+  width: 370px !important;
   text-align: center;
-  padding-top: 3px !important;
+  padding-top: 5px !important;
   margin-bottom: 5px;
   font-size: 17px !important;
   height: 7px;
@@ -289,7 +291,7 @@ code {
 #invalid {
   float: left;
   margin-top: -25px;
-  height: 20px;
+  height: 10px;
   color: red;
   visibility: hidden;
 }

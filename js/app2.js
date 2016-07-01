@@ -3,6 +3,9 @@ $(function () {
     var seriesOptions = [],
         plotLineColors = [],
         socket = io(),
+        timeFrame = 366,
+        currentStock = [],
+        currentSeries,
         colors = [  "Bisque",
                     "Black",
                     "Blue",
@@ -96,10 +99,8 @@ $(function () {
                     "YellowGreen"
                     ];
 
-    socket.on('new connection', function() {
-        $('.list-item').remove();
-    });
-
+    //Function to create the object required to pass into 
+    //the render function.
     function seriesObject(ohlc, symbol, color) {
         this.type = 'spline',
         this.name = symbol, 
@@ -107,14 +108,9 @@ $(function () {
         this.color = color
     };
 
-    var currentStock = [];
-
-    //this is what causes array to be blank in some cases?
-    socket.emit('store stock list', currentStock);
 //---------------------------------------------------------------------------------------
 //  React side-menu and buttons code below.
 
-    var timeFrame = 366;
     
     //Button that toggles the side menu on and off.
     $("#menu-toggle").click(function(e) {
@@ -123,72 +119,51 @@ $(function () {
         $(".list-btn").html($('.list-btn').text() == 'Hide stock list' ? 'Show stock list' : 'Hide stock list');
     });
 
-    socket.on('render chart', function(stocks, time) {
-        seriesOptions=[];
-        /*stocks.filter(function(stock) {
-            newChart = new Markit.InteractiveChartApi(stock, time);
-        });*/
-
-        //checks to see which time frame is activated on the chart.
-        //Changes the activated one to have an orange outline.
-        if(time == 30) {
-            $('.1m').css('border-color', '#ffc656');
-
-            $('.3m').css('border-color', '#f2f2f2');
-            $('.6m').css('border-color', '#f2f2f2');
-            $('.1y').css('border-color', '#f2f2f2');
-        } else if(time == 90) {
-            $('.3m').css('border-color', '#ffc656');
-
-            $('.1m').css('border-color', '#f2f2f2');
-            $('.6m').css('border-color', '#f2f2f2');
-            $('.1y').css('border-color', '#f2f2f2');
-        } else if(time == 183) {
-            $('.6m').css('border-color', '#ffc656');
-
-            $('.3m').css('border-color', '#f2f2f2');
-            $('.1m').css('border-color', '#f2f2f2');
-            $('.1y').css('border-color', '#f2f2f2');
-        } else if(time == 366) {
-            $('.1y').css('border-color', '#ffc656');
-
-            $('.3m').css('border-color', '#f2f2f2');
-            $('.6m').css('border-color', '#f2f2f2');
-            $('.1m').css('border-color', '#f2f2f2');
-        }
-    });
-
-    socket.on('add stocks to side menu', function(arr) {
-        //retrieves array from storage in server.js file.
-        //pushes the array into currentStock
-        if(Array.isArray(arr)) {
-            arr.filter(function(x) {
-                currentStock.push(x)
-            });
-            socket.emit('store stock list', currentStock);
-        } else {
-            //Shitty fix for side-menu socket.io sync bug.
-            if(currentStock[currentStock.length-1] == arr) {
-                currentStock.pop();
-            }
-            currentStock.push(arr);
-        }
-        ReactDOM.render( <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar'));
-        ReactDOM.render( <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar2'));
-    });
-
-    socket.on('delete a stock from side-menu', function(arr) {
-        $('.list-item').remove();
-        seriesOptions = [];
-        currentStock = arr;
-        ReactDOM.render( <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar'));
-        ReactDOM.render( <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar2'));
-        socket.emit('render chart', arr, timeFrame);
-    })
-
     var chart = {};
 
-    function renderChart(seriesCollection) {
+    socket.on('render chart', function(stocks) {
+        console.log('SEE THIS')
+        var excludeDuplicates = [];
+        stocks.filter(function(stock) {
+            if(excludeDuplicates.indexOf(stock) == -1) {
+                excludeDuplicates.push(stock);
+            }
+        });
+
+        excludeDuplicates.filter(function(stock) {
+            console.log('Running through ajax: '+stock)
+            quandlCall(stock);
+        });
+    });
+
+    //Make an Ajax call to the Quandl API.
+    function quandlCall(input) {
+        seriesOptions = [];
+        $.ajax({
+            type: 'GET',
+            url: 'https://www.quandl.com/api/v3/datasets/WIKI/'+input+'.json?api_key=V4BCHbABAxxzqfHo-miH&start_date=2016-01-01&end_date=2016-03-06',
+            dataType: 'json',
+            contentType: 'text/plain',
+            xhrFields: {
+                    withCredentials: false
+            },
+            success: function(data) {
+                if(!data) {
+                    console.error('Error: ', data.message);
+                }
+                var currentColor = colors[Math.floor((Math.random() * (colors.length-1)) + 0)];
+                currentSeries = new seriesObject(data.dataset.data.reverse(), input, currentColor);
+                seriesOptions.push(currentSeries);
+                renderChart();
+            },
+            error: function(response, txtStatus) {
+                console.log(response, txtStatus);
+            }
+        });
+    }
+
+    //Render chart using HighCharts API.
+    function renderChart() {
         //set the Highcharts date format for use.
         Highcharts.dateFormat("Month: %m Day: %d Year: %Y", 20, false);
         // create the chart
@@ -230,72 +205,148 @@ $(function () {
             },
             tooltip: { valueDecimals: 2 },
             //takes in the stock data and charts it.
-            series: seriesCollection,
+            series: seriesOptions,
             exporting: { enabled: false },
             credits: { enabled:false }
         });
     }
 
+    var validateUserInput = function(input) {
+        //Filter for form submission to prevent invalid 
+        //stock symbols or pre-existing symbols within the list.
+        if(currentStock.indexOf(input) == -1) {
+            //pushes the value of from submission to the currentStock array.
+            currentStock.push(input);
+            socket.emit('store symbol to node', input);
+            document.getElementById('stockname').value = '';
+            $('#invalid').css('visibility', 'hidden');
+        } else {
+            $('#invalid').html(input + " has already been added.")
+            $('#invalid').css('visibility', 'visible');
+        }
 
+        //disables input field upon submission for one second
+        //to prevent submission abuse.
+        document.getElementById('stockname').disabled = true;
+
+        setTimeout(function() {
+            document.getElementById('stockname').disabled = false;
+        }, 1000);
+    }
     
     $('#addStock').click(function(e) {
         e.preventDefault();
+        //ajax call to check if symbol exists.
         var userInput = $('form').serializeArray()[0].value.toUpperCase().replace(/\s/g, '');
-
         $.ajax({
             type: 'GET',
-            url: 'https://www.quandl.com/api/v3/datasets/WIKI/'+userInput+'.json?api_key=V4BCHbABAxxzqfHo-miH&start_date=2013-01-01&end_date=2016-03-06',
+            url: 'https://www.quandl.com/api/v3/datasets/WIKI/'+userInput+'.json?api_key=V4BCHbABAxxzqfHo-miH&start_date=2016-01-01&end_date=2016-03-06',
             dataType: 'json',
             contentType: 'text/plain',
-            xhrFields: {
-                    withCredentials: false
-            },
             success: function(data) {
                 if(!data) {
                     console.error('Error: ', data.message);
                 }
-                console.log(data.dataset.data);
-                var currentColor = colors[Math.floor((Math.random() * (colors.length-1)) + 0)];
-                var currentSeries = [new seriesObject(data.dataset.data.reverse(), userInput, currentColor)];
-                console.log(currentSeries);
-                renderChart(currentSeries);
+                validateUserInput(userInput);
             },
             error: function(response, txtStatus) {
                 console.log(response, txtStatus);
-            }
-        });
-
-        var acceptUserInput = function() {
-            //Filter for form submission to prevent invalid 
-            //stock symbols or pre-existing symbols within the list.
-            if(currentStock.indexOf(userInput) == -1) {
-                //pushes the value of from submission to the currentStock array.
-                currentStock.push(userInput);
-                //added the form submission to the socket function "store stock list"
-                socket.emit('store stock list', userInput);
-                seriesOptions = [];
-
-                //takes the array of submmited stocks and passes it through 'render chart'
-                socket.emit('render chart', currentStock, timeFrame);
-                $('#invalid').css('visibility', 'hidden');
-            } else {
-                $('#invalid').html(userInput + " has already been added.")
+                $('#invalid').html(userInput + " does not exist within the database.")
                 $('#invalid').css('visibility', 'visible');
             }
-
-            document.getElementById('stockname').value = '';
-            //Render React to the DOM whenever a new symbol is submitted.
-        }   
+        });
     });
 
     $('#clearChart').click(function() {
         socket.emit('clear');
     });
 
+    socket.on('add stocks to side menu', function(arr) {
+        //retrieves array from storage in server.js file.
+        //pushes the array into currentStock
+
+        if(Array.isArray(arr)) {
+            //Push all stocks from arr into currentStock
+            arr.filter(function(x) {
+                //Only push stock if it is not already inside 
+                //currentStock array.
+                if(currentStock.indexOf(x) == -1) {
+                    currentStock.push(x);
+                }
+            });
+            
+            socket.emit('store stock list', currentStock);
+        }
+
+        console.log('This is currentStock: '+arr)
+        ReactDOM.render( <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar'));
+        ReactDOM.render( <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar2'));
+    });
+
+    socket.on('delete a stock from side-menu', function(arr) {
+        $('.list-item').remove();
+        seriesOptions = [];
+        currentStock = arr;
+        ReactDOM.render( <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar'));
+        ReactDOM.render( <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar2'));
+    });
+
+    socket.on('clear', function() {
+        currentStock = [];
+        if(chart.series) {
+            chart.series.filter(function(data) {
+                data.setData([]);
+            });
+        }
+        $('.list-item').remove();
+        $('#chartContainer').empty();
+        ReactDOM.render( <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar'));
+        ReactDOM.render( <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar2'));
+    });
+
+    //Define React SideBarList Class
+    var SideBarList = React.createClass({
+        getInitialState: function() {
+            return {
+                stockList: { stockTick: [{symbol: this.props.bankOfStocks}]}
+            }
+        },
+
+        deleteItem: function(i) {
+            //disables input field upon submission for one second
+            //to prevent submission abuse.
+            document.getElementsByClassName('delete-btn').disabled = true;
+
+            
+            var x = this.state.stockList.stockTick[0].symbol[i];
+            currentStock.splice(currentStock.indexOf(x), 1);
+            console.log("CURRENTSTOCK.LENGTH: "+currentStock.length)
+            if(currentStock.length == 0) {
+                console.log('VALID')
+                socket.emit('clear');
+            } else {
+                this.setState({stockList: { stockTick: [{symbol: this.props.bankOfStocks}]}});
+                seriesOptions = [];
+                socket.emit('delete stock item', x);
+            }
+        },
+
+        render: function() {
+            console.log('BANK OF STOCKS: '+JSON.stringify(this.state.stockList));
+            var deleteItem = this.deleteItem;
+            var stockList = this.state.stockList.stockTick[0].symbol;
+            var createStockList = function(stock, i) {
+                //Randomly generates a number for unqiue key for each li element
+                var key = Math.floor((Math.random() * 9999) + 0);
+                return <li key={key} id={stock}><button className="delete-btn" onClick={deleteItem.bind(this, i, stockList)}><div className="icon-margin"><i className="fa fa-times-circle" aria-hidden="true"></i></div></button><a className="stockItem" href="#">{stock}</a></li>;
+            };
+            return <ul className="list-item">{this.state.stockList.stockTick[0].symbol.map(createStockList)}</ul>;
+        }
+    });
+
     $('.1m').click(function() {
         if(currentStock.length > 0){
             timeFrame = 30;
-            socket.emit('render chart', currentStock, timeFrame);
             $('.1m').css('border-color', '#ffc656');
 
             $('.3m').css('border-color', '#f2f2f2');
@@ -307,7 +358,6 @@ $(function () {
     $('.3m').click(function() {
         if(currentStock.length > 0){
             timeFrame = 90;
-            socket.emit('render chart', currentStock, timeFrame);
             $('.3m').css('border-color', '#ffc656');
 
             $('.1m').css('border-color', '#f2f2f2');
@@ -319,7 +369,6 @@ $(function () {
     $('.6m').click(function() {
         if(currentStock.length > 0){
             timeFrame = 183;
-            socket.emit('render chart', currentStock, timeFrame);
             $('.6m').css('border-color', '#ffc656');
 
             $('.3m').css('border-color', '#f2f2f2');
@@ -331,7 +380,6 @@ $(function () {
     $('.1y').click(function() {
         if(currentStock.length > 0){
             timeFrame = 366;
-            socket.emit('render chart', currentStock, timeFrame);
             $('.1y').css('border-color', '#ffc656');
 
             $('.3m').css('border-color', '#f2f2f2');
@@ -340,50 +388,5 @@ $(function () {
         }
     });
 
-    socket.on('clear', function() {
-        currentStock = [];
-        socket.emit('empty list');
-        if(chart.series) {
-            chart.series.filter(function(data) {
-                data.setData([]);
-            });
-        }
-        $('.list-item').remove();
-        $('#chartContainer').empty();
-        ReactDOM.render( <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar'));
-        ReactDOM.render( <SideBarList bankOfStocks={currentStock}/>, document.getElementById('sidebar2'));
-    })
-
-    //Define React SideBarList Class
-    var SideBarList = React.createClass({
-        getInitialState: function() {
-            return {
-                stockList: { stockTick: [{symbol: this.props.bankOfStocks}]}
-            }
-        },
-
-        deleteItem: function(i) {
-            var x = this.state.stockList.stockTick[0].symbol[i];
-            currentStock.splice(currentStock.indexOf(x), 1);
-            if(currentStock.length == 0) {
-                socket.emit('clear');
-            } else {
-                this.setState({stockList: { stockTick: [{symbol: this.props.bankOfStocks}]}});
-                seriesOptions = [];
-                socket.emit('delete stock item', x);
-            }
-        },
-
-        render: function() {
-            var deleteItem = this.deleteItem;
-            var stockList = this.state.stockList.stockTick[0].symbol;
-            var createStockList = function(stock, i) {
-                //Randomly generates a number for unqiue key for each li element
-                var key = Math.floor((Math.random() * 9999) + 0);
-                return <li key={key} id={stock}><button className="delete-btn" onClick={deleteItem.bind(this, i, stockList)}><div className="icon-margin"><i className="fa fa-times-circle" aria-hidden="true"></i></div></button><a className="stockItem" href="#">{stock}</a></li>;
-            };
-            return <ul className="list-item">{this.state.stockList.stockTick[0].symbol.map(createStockList)}</ul>;
-        }
-    });
 });
 

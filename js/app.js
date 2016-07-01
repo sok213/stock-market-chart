@@ -420,6 +420,12 @@ $(function () {
                 $('#invalid').css('visibility', 'visible');
             }
 
+            //disables input field upon submission for one second to prevent
+            //submission abuse.
+            document.getElementById('stockname').disabled = true;
+
+            
+
             document.getElementById('stockname').value = '';
             //Render React to the DOM whenever a new symbol is submitted.
         }   
