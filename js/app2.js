@@ -121,8 +121,7 @@ $(function () {
 
     var chart = {};
 
-    socket.on('render chart', function(stocks) {
-        console.log('SEE THIS')
+    socket.on('render chart', function(stocks, time) {
         var excludeDuplicates = [];
         stocks.filter(function(stock) {
             if(excludeDuplicates.indexOf(stock) == -1) {
@@ -132,16 +131,76 @@ $(function () {
 
         excludeDuplicates.filter(function(stock) {
             console.log('Running through ajax: '+stock)
-            quandlCall(stock);
+            quandlCall(stock, time);
         });
+        //checks to see which time frame is activated on the chart.
+        //Changes the activated one to have an orange outline.
+        if(time == 30) {
+            $('.1m').css('border-color', '#ffc656');
+
+            $('.3m').css('border-color', '#f2f2f2');
+            $('.6m').css('border-color', '#f2f2f2');
+            $('.1y').css('border-color', '#f2f2f2');
+        } else if(time == 90) {
+            $('.3m').css('border-color', '#ffc656');
+
+            $('.1m').css('border-color', '#f2f2f2');
+            $('.6m').css('border-color', '#f2f2f2');
+            $('.1y').css('border-color', '#f2f2f2');
+        } else if(time == 183) {
+            $('.6m').css('border-color', '#ffc656');
+
+            $('.3m').css('border-color', '#f2f2f2');
+            $('.1m').css('border-color', '#f2f2f2');
+            $('.1y').css('border-color', '#f2f2f2');
+        } else if(time == 366) {
+            $('.1y').css('border-color', '#ffc656');
+
+            $('.3m').css('border-color', '#f2f2f2');
+            $('.6m').css('border-color', '#f2f2f2');
+            $('.1m').css('border-color', '#f2f2f2');
+        }
     });
 
+    //function to convert duration number from timeframe buttons to a valid
+    //date format to pass into the Ajax call.
+    function convertTimeToDate(time) {
+        var d = new Date();
+        var d2 = new Date();
+        d2.setDate(d2.getDate());
+        d.setDate(d.getDate()-time);
+        var startDate = d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate();
+        var endDate = d2.getFullYear() + '-' + d2.getMonth() + '-' + d2.getDate();
+        return([startDate, endDate]);
+    }
+
     //Make an Ajax call to the Quandl API.
-    function quandlCall(input) {
+    function quandlCall(input, timeFrame) {
+        var x = convertTimeToDate(timeFrame);
+
+        //Function that adds a '0' to dates with single digit numbers
+        //in order to pass URL formatting requirements.
+        function correct(x) {
+            var monthAndDay = [x.split('-')[1], x.split('-')[2] ];
+            var result = [x.split('-')[0]];
+            monthAndDay.filter(function(n) {
+                if(n.length < 2) {
+                    result.push('0' + n)
+                } else {
+                    result.push(n);
+                }
+            })
+            return(result.join('-'))
+        }
+
+        var startDate = correct(x[0])
+        var endDate = correct(x[1])
+
         seriesOptions = [];
         $.ajax({
             type: 'GET',
-            url: 'https://www.quandl.com/api/v3/datasets/WIKI/'+input+'.json?api_key=V4BCHbABAxxzqfHo-miH&start_date=2016-01-01&end_date=2016-03-06',
+            url: 'https://www.quandl.com/api/v3/datasets/WIKI/'+input+'.json?api_key=V4BCHbABAxxzqfHo-miH&start_date='
+                  +startDate+'&end_date='+endDate,
             dataType: 'json',
             contentType: 'text/plain',
             xhrFields: {
@@ -165,7 +224,7 @@ $(function () {
     //Render chart using HighCharts API.
     function renderChart() {
         //set the Highcharts date format for use.
-        Highcharts.dateFormat("Month: %m Day: %d Year: %Y", 20, false);
+        Highcharts.dateFormat("Year: %Y Month: %m Day: %d", 20, false);
         // create the chart
         chart = new Highcharts.Chart({
             chart: {
@@ -175,7 +234,7 @@ $(function () {
             title: { text: 'Historical Price' },
             marginBottom: 100,
             yAxis: {
-                opposite: false,
+                opposite: true,
             
                 title: {
                     text: ''
@@ -198,7 +257,7 @@ $(function () {
                 type: 'datetime',
                 tickInterval: 7 * 24 * 36e5, // one week
                 labels: {
-                    format: '{value: %m/%d/%Y}',
+                    format: '{value: %Y/%m/%d}',
                     align: 'right',
                     rotation: -30
                 }
@@ -344,9 +403,13 @@ $(function () {
         }
     });
 
+
+    //Change border color when a timeFrame button is clicked and set
+    //timeFrame variable according to each button.
     $('.1m').click(function() {
         if(currentStock.length > 0){
-            timeFrame = 30;
+            timeFrame = 31;
+            socket.emit('store time', timeFrame);
             $('.1m').css('border-color', '#ffc656');
 
             $('.3m').css('border-color', '#f2f2f2');
@@ -358,6 +421,7 @@ $(function () {
     $('.3m').click(function() {
         if(currentStock.length > 0){
             timeFrame = 90;
+            socket.emit('store time', timeFrame);
             $('.3m').css('border-color', '#ffc656');
 
             $('.1m').css('border-color', '#f2f2f2');
@@ -369,6 +433,7 @@ $(function () {
     $('.6m').click(function() {
         if(currentStock.length > 0){
             timeFrame = 183;
+            socket.emit('store time', timeFrame);
             $('.6m').css('border-color', '#ffc656');
 
             $('.3m').css('border-color', '#f2f2f2');
@@ -380,6 +445,7 @@ $(function () {
     $('.1y').click(function() {
         if(currentStock.length > 0){
             timeFrame = 366;
+            socket.emit('store time', timeFrame);
             $('.1y').css('border-color', '#ffc656');
 
             $('.3m').css('border-color', '#f2f2f2');

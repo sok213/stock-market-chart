@@ -54,7 +54,7 @@ html, body {
     #invalid {
       float: center !important;
       width: 360px;
-      font-size: 20px;
+      font-size: 17px;
       margin-top: -30px !important;
       margin-bottom: 0px !important;
     }
@@ -85,9 +85,10 @@ html, body {
     }
 
     #stockname {
-      margin-left: 0px !important;
       width: 100% !important;
       float: center !important;
+      margin-left: 2px !important;
+      margin-right: 5px !important;
     }
 
     .btn-success {
@@ -203,7 +204,7 @@ code {
   margin-left: -15px;
   position: relative;
   float: left;
-  width: 370px !important;
+  width: 370px;
   text-align: center;
   padding-top: 5px !important;
   margin-bottom: 5px;
