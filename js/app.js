@@ -164,8 +164,8 @@ $(function () {
         var d2 = new Date();
         d2.setDate(d2.getDate());
         d.setDate(d.getDate()-time);
-        var startDate = d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate();
-        var endDate = d2.getFullYear() + '-' + d2.getMonth() + '-' + d2.getDate();
+        var startDate = d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate();
+        var endDate = d2.getFullYear() + '-' + (d2.getMonth()+1) + '-' + d2.getDate();
         return([startDate, endDate]);
     }
 
