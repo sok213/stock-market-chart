@@ -3,9 +3,8 @@ var express = require('express'),
 	http = require('http').Server(app),
 	io = require('socket.io')(http),
 	storage = require('node-persist'),
-	storedStocks = [];
-
-var port = process.env.PORT || 5000;
+	storedStocks = [],
+	port = process.env.PORT || 5000;
 
 storage.initSync();
 storage.setItem('storedStocks', []);
@@ -37,8 +36,8 @@ io.on('connection', function(socket) {
 	socket.on('delete stock item', function(stock) {
 		storedStocks = storage.getItem('storedStocks');
 		storedStocks.splice(storedStocks.indexOf(stock), 1);
-		console.log('deleted: '+stock+' from storedStocks: '
-					+ storedStocks);
+		console.log('deleted: '+stock+' from storedStocks: ' +
+					storedStocks);
 		storage.setItem('storedStocks', storedStocks);
 		io.emit('delete a stock from side-menu', storedStocks);
 		io.emit('render chart', storage.getItem('storedStocks'), storage.getItem('time'));
