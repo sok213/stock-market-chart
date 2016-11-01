@@ -14,7 +14,7 @@ $(function () {
         this.name = symbol, 
         this.data = ohlc,
         this.color = color
-    };
+    }
     
     //Button that toggles the side menu on and off.
     $("#menu-toggle").click(function(e) {
